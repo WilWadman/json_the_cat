@@ -1,31 +1,42 @@
 const request = require('request');
-const args = process.argv;
-let slicedArgs = args.slice(2);
 
-callback = function(error, response, body) {
-  try {
+// const readCat = function(error, response, body) {
+//   if (error) {
+//     console.log(error);
+//     return;
+//   }
+
+//   const data = JSON.parse(body);
+
+//   if (data.length === 0) {
+//     console.log(`Cat not found!`);
+//     return;
+//   }
+
+//   console.log(data[0].description);
+
+// };
+
+const fetchBreedDescription = function(breedName, callback) {
+  const url = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
+  console.log(url);
+
+  request(url, function(error, response, body) {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+
     const data = JSON.parse(body);
 
-
-    if (data[0] === undefined) {
-      console.log(`Could not find any info on: ${slicedArgs[1]}`);
-    } else {
-
-
-      console.log(data[0]['description']);
-
+    if (data.length === 0) {
+      callback(`Cat not found!`, null);
+      return;
     }
-  } catch (error) {
 
-    console.log(error);
-  }
+    callback(null,data[0].description);
+
+  });
 };
 
-
-
-
-
-request(`${slicedArgs[0]}${slicedArgs[1]}`, callback);
-
-
-
+module.exports = { fetchBreedDescription };
